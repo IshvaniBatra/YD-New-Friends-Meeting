@@ -3,89 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Youth Victory Mission Hub</title>
+    <title>Senku's Daily Quest</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --sgi-blue: #0055a4;
-            --sgi-yellow: #ffcc00;
-            --sgi-red: #e4002b;
-            --bg-light: #f9f9f9;
+            --bsg-blue: #0055a4;
+            --bsg-yellow: #ffcc00;
+            --bsg-red: #e4002b;
         }
 
         body {
             margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; background-color: var(--bg-light);
-            font-family: 'Poppins', sans-serif; text-align: center;
+            min-height: 100vh; background: linear-gradient(135deg, #0055a4 0%, #003d75 100%);
+            font-family: 'Poppins', sans-serif; text-align: center; color: #333;
         }
 
         .container {
-            background: white; padding: 30px 20px; border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 400px; width: 100%;
-            position: relative; border-top: 8px solid var(--sgi-blue);
+            background: #ffffff; padding: 30px 20px; border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-width: 420px; width: 100%;
+            border: 4px solid var(--bsg-yellow); position: relative;
         }
 
-        .mascot { font-size: 50px; margin-bottom: 10px; display: block; animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .welcome-msg {
+            background: var(--bsg-blue); color: white; padding: 10px;
+            border-radius: 15px; font-size: 14px; margin-bottom: 15px;
+            font-weight: 500; border-bottom: 3px solid var(--bsg-red);
+        }
 
-        h1 { color: var(--sgi-blue); font-size: 22px; margin: 10px 0; text-transform: uppercase; }
+        h1 { 
+            color: var(--bsg-blue); font-size: 20px; margin: 10px 0; 
+            line-height: 1.3; font-weight: 800; text-transform: uppercase;
+        }
+
+        .mascot { font-size: 55px; display: block; margin: 10px 0; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* --- UPDATED DICE SIZE --- */
+        #dice { 
+            font-size: 150px; /* Increased from 90px to 150px */
+            margin: 10px 0; 
+            cursor: pointer; 
+            display: inline-block;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+            line-height: 1;
+        }
         
-        .progress-badge {
-            background: #333; color: var(--sgi-yellow); font-size: 12px; 
-            padding: 4px 12px; border-radius: 20px; font-weight: bold;
-        }
-
-        #dice { font-size: 80px; margin: 20px 0; cursor: pointer; display: inline-block; transition: 0.3s; }
-        .rolling { animation: spin 0.6s infinite linear; }
-        @keyframes spin { 100% { transform: rotate(360deg) scale(1.1); } }
+        .rolling { animation: fastSpin 0.5s infinite linear; }
+        @keyframes fastSpin { 100% { transform: rotate(360deg); } }
 
         #task-display {
-            background: #f0f7ff; border-radius: 15px; padding: 20px;
-            min-height: 80px; display: flex; align-items: center; justify-content: center;
-            font-weight: 600; color: #222; margin: 20px 0; border-left: 5px solid var(--sgi-yellow);
+            background: #fff9e6; border: 2px solid var(--bsg-yellow); border-radius: 20px;
+            padding: 20px; min-height: 90px; display: flex; align-items: center; 
+            justify-content: center; font-weight: 700; color: #222; margin: 20px 0;
+            font-size: 18px;
         }
 
         .btn {
-            border: none; padding: 14px 25px; border-radius: 50px; 
-            font-weight: bold; cursor: pointer; width: 80%; margin: 5px 0; transition: 0.2s;
+            border: none; padding: 16px 30px; border-radius: 50px; 
+            font-weight: bold; cursor: pointer; width: 85%; transition: 0.3s;
+            font-size: 16px; margin-bottom: 10px;
         }
-        .btn-roll { background: var(--sgi-blue); color: white; }
-        .btn-complete { background: var(--sgi-red); color: white; display: none; }
-        .btn-whatsapp { 
-            background: #25D366; color: white; display: none; 
-            text-decoration: none; font-size: 14px; align-items: center; justify-content: center;
+        .btn-roll { background: var(--bsg-blue); color: white; box-shadow: 0 5px 15px rgba(0,85,164,0.4); }
+        .btn-complete { background: var(--bsg-red); color: white; display: none; }
+        .btn-whatsapp { background: #25D366; color: white; display: none; text-decoration: none; align-items: center; justify-content: center; }
+
+        .guidance {
+            font-size: 12px; margin-top: 20px; color: #555; 
+            border-top: 1px solid #eee; padding-top: 15px; font-style: italic;
         }
 
-        .guidance-box {
-            margin-top: 25px; padding: 15px; font-size: 13px; line-height: 1.5;
-            color: #555; background: #fff9e6; border-radius: 10px; font-style: italic;
+        .countdown-section {
+            margin-top: 20px; padding: 15px; background: #f0f7ff; 
+            border-radius: 20px; border: 2px solid var(--bsg-blue);
         }
-
-        .countdown { font-size: 16px; font-weight: bold; color: var(--sgi-red); margin-top: 15px; }
+        .countdown-title { font-size: 12px; font-weight: bold; color: var(--bsg-blue); margin-bottom: 5px; }
+        #timer { font-size: 18px; font-weight: 800; color: var(--bsg-red); }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="welcome-msg">🌟 Welcome, Beloved Protagonist of Kosen-rufu!</div>
+    
+    <h1>Youth Division Senku's Daily Quest for Absolute Victory!</h1>
+    
     <span class="mascot" id="lion">🦁</span>
-    <h1>Victory Mission Hub</h1>
-    <div class="progress-badge" id="counter">11 MISSIONS REMAINING</div>
-
+    
     <div id="dice">🎲</div>
     <br>
-    <button id="roll-btn" class="btn btn-roll">Roll for Victory</button>
     
-    <div id="task-display">Ready to make a breakthrough? Click roll!</div>
+    <button id="roll-btn" class="btn btn-roll">Start My Quest</button>
+    
+    <div id="task-display">Determine your target for victory!</div>
 
-    <button id="complete-btn" class="btn btn-complete">I TRIUMPHED! ✓</button>
-    <a id="whatsapp-btn" class="btn btn-whatsapp" target="_blank">Share Victory on WhatsApp 📱</a>
+    <button id="complete-btn" class="btn btn-complete">MISSION ACCOMPLISHED! ✓</button>
+    <a id="whatsapp-btn" class="btn btn-whatsapp" target="_blank">Share Victory 📱</a>
 
-    <div class="guidance-box">
-        "A person who has a mission is strong. A person who lives for a great vow is invincible." <br>
-        <strong>— Daisaku Ikeda</strong>
+    <div class="guidance">
+        "A person who has a mission is strong. A person who lives for a great vow is invincible." — Daisaku Ikeda
     </div>
 
-    <div class="countdown" id="timer">Loading Countdown...</div>
+    <div class="countdown-section">
+        <div class="countdown-title">Let's come together for the Youth Division New Friends Festival in -</div>
+        <div id="timer">Loading...</div>
+    </div>
 </div>
 
 <script>
@@ -98,29 +119,21 @@
         "Identify a friend in need and talk to them", "Chant for 15 minutes more than yesterday"
     ];
 
-    let availableTasks = JSON.parse(localStorage.getItem('myMissions')) || [...originalTasks];
+    let availableTasks = JSON.parse(localStorage.getItem('senkuMissions')) || [...originalTasks];
     let currentTask = "";
 
     const rollBtn = document.getElementById('roll-btn');
     const completeBtn = document.getElementById('complete-btn');
     const whatsappBtn = document.getElementById('whatsapp-btn');
     const taskDisplay = document.getElementById('task-display');
-    const counterDisplay = document.getElementById('counter');
     const dice = document.getElementById('dice');
-
-    function updateUI() {
-        counterDisplay.innerText = `${availableTasks.length} MISSIONS REMAINING`;
-        if (availableTasks.length === 0) {
-            taskDisplay.innerText = "Congratulations! You have fulfilled every mission for the New Friends Festival!";
-            rollBtn.style.display = "none";
-        }
-    }
 
     rollBtn.addEventListener('click', () => {
         rollBtn.disabled = true;
         completeBtn.style.display = "none";
         whatsappBtn.style.display = "none";
         dice.classList.add('rolling');
+        taskDisplay.innerText = "Chanting for the best mission...";
         
         setTimeout(() => {
             const idx = Math.floor(Math.random() * availableTasks.length);
@@ -133,22 +146,22 @@
     });
 
     completeBtn.addEventListener('click', () => {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0055a4', '#ffcc00', '#e4002b'] });
+        confetti({ particleCount: 150, spread: 80, colors: ['#0055a4', '#ffcc00', '#e4002b'] });
         
-        // WhatsApp link setup
-        const senseiQuote = "Sensei says: 'A person who has a mission is strong!'";
-        const waText = encodeURIComponent(`🦁 Victory! I just completed my Youth Mission: "${currentTask}"\n\n${senseiQuote}\n\nJoin me for the New Friends Festival on March 15! 🔥`);
+        const waText = encodeURIComponent(`🦁 Victory in Senku's Quest!\nMission Completed: "${currentTask}"\n\n"A person who has a mission is strong!" — Sensei\n\nSee you at the New Friends Festival on March 15! 🔥`);
         whatsappBtn.href = `https://wa.me/?text=${waText}`;
         
         availableTasks = availableTasks.filter(t => t !== currentTask);
-        localStorage.setItem('myMissions', JSON.stringify(availableTasks));
+        localStorage.setItem('senkuMissions', JSON.stringify(availableTasks));
         
         completeBtn.style.display = "none";
         whatsappBtn.style.display = "flex";
-        updateUI();
+        if(availableTasks.length === 0) {
+            taskDisplay.innerText = "AMAZING! All quests completed. You are truly a Lion of Soka!";
+            rollBtn.style.display = "none";
+        }
     });
 
-    // Timer logic
     const targetDate = new Date("March 15, 2026 00:00:00").getTime();
     setInterval(() => {
         const now = new Date().getTime();
@@ -157,10 +170,8 @@
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
-        document.getElementById("timer").innerText = `FESTIVAL IN: ${d}d ${h}h ${m}m ${s}s`;
+        document.getElementById("timer").innerText = `${d}d ${h}h ${m}m ${s}s`;
     }, 1000);
-
-    updateUI();
 </script>
 
 </body>
