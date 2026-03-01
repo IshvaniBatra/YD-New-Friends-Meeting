@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Victory Mission Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --sgi-blue: #0055a4;
+            --sgi-yellow: #ffcc00;
+            --sgi-red: #e4002b;
+            --bg-light: #f9f9f9;
+        }
+
+        body {
+            margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background-color: var(--bg-light);
+            font-family: 'Poppins', sans-serif; text-align: center;
+        }
+
+        .container {
+            background: white; padding: 30px 20px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 400px; width: 100%;
+            position: relative; border-top: 8px solid var(--sgi-blue);
+        }
+
+        .mascot { font-size: 50px; margin-bottom: 10px; display: block; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        h1 { color: var(--sgi-blue); font-size: 22px; margin: 10px 0; text-transform: uppercase; }
+        
+        .progress-badge {
+            background: #333; color: var(--sgi-yellow); font-size: 12px; 
+            padding: 4px 12px; border-radius: 20px; font-weight: bold;
+        }
+
+        #dice { font-size: 80px; margin: 20px 0; cursor: pointer; display: inline-block; transition: 0.3s; }
+        .rolling { animation: spin 0.6s infinite linear; }
+        @keyframes spin { 100% { transform: rotate(360deg) scale(1.1); } }
+
+        #task-display {
+            background: #f0f7ff; border-radius: 15px; padding: 20px;
+            min-height: 80px; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; color: #222; margin: 20px 0; border-left: 5px solid var(--sgi-yellow);
+        }
+
+        .btn {
+            border: none; padding: 14px 25px; border-radius: 50px; 
+            font-weight: bold; cursor: pointer; width: 80%; margin: 5px 0; transition: 0.2s;
+        }
+        .btn-roll { background: var(--sgi-blue); color: white; }
+        .btn-complete { background: var(--sgi-red); color: white; display: none; }
+        .btn-whatsapp { 
+            background: #25D366; color: white; display: none; 
+            text-decoration: none; font-size: 14px; align-items: center; justify-content: center;
+        }
+
+        .guidance-box {
+            margin-top: 25px; padding: 15px; font-size: 13px; line-height: 1.5;
+            color: #555; background: #fff9e6; border-radius: 10px; font-style: italic;
+        }
+
+        .countdown { font-size: 16px; font-weight: bold; color: var(--sgi-red); margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <span class="mascot" id="lion">🦁</span>
+    <h1>Victory Mission Hub</h1>
+    <div class="progress-badge" id="counter">11 MISSIONS REMAINING</div>
+
+    <div id="dice">🎲</div>
+    <br>
+    <button id="roll-btn" class="btn btn-roll">Roll for Victory</button>
+    
+    <div id="task-display">Ready to make a breakthrough? Click roll!</div>
+
+    <button id="complete-btn" class="btn btn-complete">I TRIUMPHED! ✓</button>
+    <a id="whatsapp-btn" class="btn btn-whatsapp" target="_blank">Share Victory on WhatsApp 📱</a>
+
+    <div class="guidance-box">
+        "A person who has a mission is strong. A person who lives for a great vow is invincible." <br>
+        <strong>— Daisaku Ikeda</strong>
+    </div>
+
+    <div class="countdown" id="timer">Loading Countdown...</div>
+</div>
+
+<script>
+    const originalTasks = [
+        "Chant for 20 minutes!", "Homevisit a fellow Youth Division Member!",
+        "Message and check up on a youth division member!", "Read NHR-3 from the Trailblazers website",
+        "Read 5 pages of the March Value Creation", "Share Sensei's guidance with anyone!",
+        "Invite a friend to the Youth Division New Friends Festival", "Have a dialogue",
+        "Encourage a youth division member to attend the weekly study calls",
+        "Identify a friend in need and talk to them", "Chant for 15 minutes more than yesterday"
+    ];
+
+    let availableTasks = JSON.parse(localStorage.getItem('myMissions')) || [...originalTasks];
+    let currentTask = "";
+
+    const rollBtn = document.getElementById('roll-btn');
+    const completeBtn = document.getElementById('complete-btn');
+    const whatsappBtn = document.getElementById('whatsapp-btn');
+    const taskDisplay = document.getElementById('task-display');
+    const counterDisplay = document.getElementById('counter');
+    const dice = document.getElementById('dice');
+
+    function updateUI() {
+        counterDisplay.innerText = `${availableTasks.length} MISSIONS REMAINING`;
+        if (availableTasks.length === 0) {
+            taskDisplay.innerText = "Congratulations! You have fulfilled every mission for the New Friends Festival!";
+            rollBtn.style.display = "none";
+        }
+    }
+
+    rollBtn.addEventListener('click', () => {
+        rollBtn.disabled = true;
+        completeBtn.style.display = "none";
+        whatsappBtn.style.display = "none";
+        dice.classList.add('rolling');
+        
+        setTimeout(() => {
+            const idx = Math.floor(Math.random() * availableTasks.length);
+            currentTask = availableTasks[idx];
+            taskDisplay.innerText = currentTask;
+            dice.classList.remove('rolling');
+            rollBtn.disabled = false;
+            completeBtn.style.display = "inline-block";
+        }, 1000);
+    });
+
+    completeBtn.addEventListener('click', () => {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0055a4', '#ffcc00', '#e4002b'] });
+        
+        // WhatsApp link setup
+        const senseiQuote = "Sensei says: 'A person who has a mission is strong!'";
+        const waText = encodeURIComponent(`🦁 Victory! I just completed my Youth Mission: "${currentTask}"\n\n${senseiQuote}\n\nJoin me for the New Friends Festival on March 15! 🔥`);
+        whatsappBtn.href = `https://wa.me/?text=${waText}`;
+        
+        availableTasks = availableTasks.filter(t => t !== currentTask);
+        localStorage.setItem('myMissions', JSON.stringify(availableTasks));
+        
+        completeBtn.style.display = "none";
+        whatsappBtn.style.display = "flex";
+        updateUI();
+    });
+
+    // Timer logic
+    const targetDate = new Date("March 15, 2026 00:00:00").getTime();
+    setInterval(() => {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        document.getElementById("timer").innerText = `FESTIVAL IN: ${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
+
+    updateUI();
+</script>
+
+</body>
+</html>
